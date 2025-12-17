@@ -7,6 +7,8 @@ Jednoduchý rozcestník pro děti na moje další stránky:
 - [Ryby](https://garon92.github.io/ryby/)
 - [Komáři](https://garon92.github.io/komari/)
 
+_Poslední aktualizace: 17. 12. 2025_
+
 ## Nasazení (GitHub Pages)
 
 1. V GitHub repozitáři otevři **Settings → Pages**
