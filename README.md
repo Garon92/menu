@@ -3,6 +3,7 @@
 Jednoduchý rozcestník pro děti na moje další stránky:
 
 - [Matematika](https://garon92.github.io/matematika/)
+- [Spojovačka](https://garon92.github.io/spojovacka)
 - [Tanky](https://garon92.github.io/tanky/)
 - [Ryby](https://garon92.github.io/ryby/)
 - [Komáři](https://garon92.github.io/komari/)

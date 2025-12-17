@@ -171,6 +171,9 @@ body {
 .card--mosquito {
   --accent: #4fe18c;
 }
+.card--connect {
+  --accent: #f59e0b;
+}
 
 .footer {
   padding: 0 0 26px;
