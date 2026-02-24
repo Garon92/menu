@@ -223,6 +223,7 @@ body {
 
 .card--math    { --accent: #7b61ff; }
 .card--czech   { --accent: #e05cd2; }
+.card--english { --accent: #3b82f6; }
 .card--tanks   { --accent: #ff5a5a; }
 .card--fish    { --accent: #00c2ff; }
 .card--mosquito { --accent: #4fe18c; }
