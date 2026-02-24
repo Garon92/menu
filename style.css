@@ -105,11 +105,14 @@ body {
   display: grid;
   place-items: center;
   color: var(--muted);
+  flex: 0 0 auto;
+  overflow: hidden;
 }
 
 .category__icon svg {
   width: 24px;
   height: 24px;
+  flex: 0 0 auto;
 }
 
 .category__title {
