@@ -1,26 +1,28 @@
 :root {
-  --bg0: #0b1020;
-  --bg1: #1a2040;
-  --card: rgba(255, 255, 255, 0.10);
-  --cardBorder: rgba(255, 255, 255, 0.16);
+  --bg0: #0a0e1a;
+  --bg1: #141c30;
+  --card: rgba(255, 255, 255, 0.07);
+  --cardHover: rgba(255, 255, 255, 0.12);
+  --cardBorder: rgba(255, 255, 255, 0.12);
   --text: rgba(255, 255, 255, 0.92);
-  --muted: rgba(255, 255, 255, 0.72);
-  --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  --muted: rgba(255, 255, 255, 0.55);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 
-  --radius: 18px;
+  --radius: 16px;
   --pad: 18px;
   --focus: #ffffff;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg0: #f6f8ff;
-    --bg1: #e9edff;
-    --card: rgba(0, 0, 0, 0.035);
-    --cardBorder: rgba(0, 0, 0, 0.10);
+    --bg0: #f4f6fb;
+    --bg1: #eaeffa;
+    --card: rgba(255, 255, 255, 0.7);
+    --cardHover: rgba(255, 255, 255, 0.95);
+    --cardBorder: rgba(0, 0, 0, 0.08);
     --text: rgba(0, 0, 0, 0.88);
-    --muted: rgba(0, 0, 0, 0.60);
-    --shadow: 0 18px 50px rgba(0, 0, 0, 0.10);
+    --muted: rgba(0, 0, 0, 0.48);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
     --focus: #000000;
   }
 }
@@ -50,143 +52,193 @@ body {
     "Segoe UI Emoji";
   color: var(--text);
   background:
-    radial-gradient(900px 500px at 15% 0%, rgba(123, 97, 255, 0.22), transparent 60%),
-    radial-gradient(900px 500px at 85% 15%, rgba(0, 193, 255, 0.18), transparent 55%),
-    linear-gradient(180deg, var(--bg0), var(--bg1));
+    radial-gradient(ellipse 120% 60% at 10% 0%, rgba(123, 97, 255, 0.18), transparent),
+    radial-gradient(ellipse 100% 50% at 90% 10%, rgba(0, 193, 255, 0.14), transparent),
+    linear-gradient(170deg, var(--bg0), var(--bg1));
+  min-height: 100vh;
 }
 
 .container {
-  width: min(980px, calc(100% - 2 * 20px));
+  width: min(860px, calc(100% - 40px));
   margin: 0 auto;
 }
 
 .header {
-  padding: 44px 0 20px;
+  padding: 48px 0 12px;
 }
 
 .title {
-  margin: 0 0 10px;
-  font-size: clamp(34px, 6vw, 52px);
+  margin: 0 0 8px;
+  font-size: clamp(32px, 5.5vw, 46px);
+  font-weight: 800;
   letter-spacing: -0.03em;
-  line-height: 1.04;
+  line-height: 1.1;
 }
 
 .subtitle {
   margin: 0;
   color: var(--muted);
-  font-size: clamp(16px, 2.6vw, 20px);
+  font-size: clamp(15px, 2.4vw, 18px);
+  font-weight: 400;
 }
+
+/* --- Categories --- */
+
+.category {
+  padding: 10px 0 8px;
+}
+
+.category + .category {
+  padding-top: 4px;
+}
+
+.category__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 0 12px;
+}
+
+.category__icon {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+.category__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.category__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* --- Grid --- */
 
 .grid {
   display: grid;
-  gap: 14px;
-  padding: 18px 0 48px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  padding-bottom: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
+
+/* --- Cards --- */
 
 .card {
   --accent: #7b61ff;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: calc(var(--pad) + 4px);
+  padding: var(--pad);
   border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), var(--card));
+  background: var(--card);
   border: 1px solid var(--cardBorder);
   box-shadow: var(--shadow);
   text-decoration: none;
   color: inherit;
   position: relative;
   overflow: hidden;
-  min-height: 88px;
+  min-height: 82px;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .card::before {
   content: "";
   position: absolute;
-  inset: -60% -30%;
-  background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 55%);
-  transform: rotate(-10deg);
-  opacity: 0.9;
+  inset: 0;
+  background: radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%);
   pointer-events: none;
+  transition: opacity 0.18s ease;
+  opacity: 0.6;
+}
+
+.card:hover::before {
+  opacity: 1;
 }
 
 .card__icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
   flex: 0 0 auto;
+  position: relative;
 }
 
 .card__icon svg {
-  width: 30px;
-  height: 30px;
-  color: color-mix(in srgb, var(--accent) 92%, var(--text));
+  width: 26px;
+  height: 26px;
+  color: color-mix(in srgb, var(--accent) 90%, var(--text));
 }
 
 .card__text {
   display: grid;
   gap: 2px;
   min-width: 0;
+  position: relative;
 }
 
 .card__title {
-  font-size: 20px;
-  font-weight: 750;
+  font-size: 17px;
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .card__desc {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .card:hover {
   transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--cardBorder));
+  background: var(--cardHover);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--cardBorder));
+  box-shadow: var(--shadow), 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 .card:active {
-  transform: translateY(0px);
+  transform: translateY(0);
+  transition-duration: 0.06s;
 }
 
 .card:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--accent) 70%, var(--focus));
-  outline-offset: 3px;
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, var(--focus));
+  outline-offset: 2px;
 }
 
-.card--math {
-  --accent: #7b61ff;
-}
-.card--tanks {
-  --accent: #ff5a5a;
-}
-.card--fish {
-  --accent: #00c2ff;
-}
-.card--mosquito {
-  --accent: #4fe18c;
-}
-.card--connect {
-  --accent: #f59e0b;
-}
-.card--czech {
-  --accent: #e05cd2;
-}
+/* --- Accents --- */
+
+.card--math    { --accent: #7b61ff; }
+.card--czech   { --accent: #e05cd2; }
+.card--tanks   { --accent: #ff5a5a; }
+.card--fish    { --accent: #00c2ff; }
+.card--mosquito { --accent: #4fe18c; }
+.card--connect { --accent: #f59e0b; }
+
+/* --- Footer --- */
 
 .footer {
-  padding: 0 0 26px;
+  padding: 24px 0 28px;
 }
 
 .footer__inner {
   border-top: 1px solid var(--cardBorder);
-  padding-top: 18px;
+  padding-top: 16px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -198,5 +250,3 @@ body {
     transform: none;
   }
 }
-
-
