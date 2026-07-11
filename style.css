@@ -231,6 +231,7 @@ body {
 .card--fish    { --accent: #00c2ff; }
 .card--mosquito { --accent: #4fe18c; }
 .card--connect { --accent: #f59e0b; }
+.card--dots    { --accent: #4fd1c5; }
 
 /* --- Footer --- */
 
