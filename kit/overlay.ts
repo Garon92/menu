@@ -170,9 +170,13 @@ function mount<T>(opts: OverlayBaseOptions, kind: string, build: (close: (v: T) 
   }
   build(close, panel);
   if (opts.extra) {
+    const wrap = h('div', { class: 'g92-overlay__extra' }, opts.extra);
     const actions = panel.querySelector('.g92-overlay__actions');
-    panel.insertBefore(opts.extra, actions);
+    (actions?.parentElement ?? panel).insertBefore(wrap, actions);
   }
+  // hero (icon, title, score…) | controls (choices, stats, buttons) — side by side on short landscape screens
+  const containers = panel.querySelector(':scope > .g92-overlay__view') ? [...panel.querySelectorAll<HTMLElement>(':scope > .g92-overlay__view')] : [panel];
+  for (const c of containers) splitHeroControls(c);
   window.addEventListener('keydown', keyHandler, true);
   container.append(root);
   const primary = panel.querySelector<HTMLElement>('[data-primary]');
@@ -180,6 +184,15 @@ function mount<T>(opts: OverlayBaseOptions, kind: string, build: (close: (v: T) 
   promise.el = root;
   promise.close = close;
   return promise;
+}
+
+const CONTROL_SEL = '.g92-overlay__section, .g92-overlay__stats, .g92-overlay__extra, .g92-howto, .g92-keys, .g92-overlay__actions';
+
+function splitHeroControls(c: HTMLElement): void {
+  const kids = [...c.children];
+  const idx = kids.findIndex((k) => k.matches(CONTROL_SEL));
+  if (idx <= 0) return;
+  c.append(h('div', { class: 'g92-overlay__hero' }, ...kids.slice(0, idx)), h('div', { class: 'g92-overlay__controls' }, ...kids.slice(idx)));
 }
 
 function isTyping(e: KeyboardEvent): boolean {

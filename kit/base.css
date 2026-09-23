@@ -1759,6 +1759,112 @@
     }
   }
 
+  .g92-overlay__hero,
+  .g92-overlay__controls {
+    display: grid;
+    justify-items: center;
+    gap: var(--g92-space-4);
+    width: 100%;
+    min-width: 0;
+  }
+
+  .g92-overlay__extra {
+    width: 100%;
+  }
+
+  /* Short landscape screens (phones sideways): hero left, controls right, no scrolling */
+  @media (max-height: 520px) and (orientation: landscape) {
+    .g92-overlay {
+      padding-block: max(8px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-bottom, 0px));
+    }
+
+    .g92-overlay__panel {
+      width: min(100%, 54rem);
+      padding: var(--g92-space-5) var(--g92-space-6);
+      border-radius: var(--g92-radius-xl);
+    }
+
+    .g92-overlay__panel:has(> .g92-overlay__hero),
+    .g92-overlay__view:has(> .g92-overlay__hero) {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      align-items: center;
+      column-gap: var(--g92-space-8);
+    }
+
+    .g92-overlay__hero {
+      gap: var(--g92-space-2);
+    }
+
+    .g92-overlay__controls {
+      gap: var(--g92-space-3);
+    }
+
+    .g92-overlay__icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+    }
+
+    .g92-overlay__title {
+      font-size: var(--g92-fs-3xl);
+    }
+
+    .g92-overlay__score {
+      font-size: var(--g92-fs-4xl);
+    }
+
+    .g92-overlay .g92-stars--lg {
+      font-size: 2.25rem;
+    }
+
+    .g92-overlay__actions {
+      margin-top: 0;
+      gap: var(--g92-space-2);
+    }
+
+    .g92-overlay .g92-btn--xl {
+      --_h: 60px;
+    }
+
+    .g92-difficulty__card {
+      min-height: 64px;
+      padding-block: var(--g92-space-2);
+    }
+
+    .g92-howto {
+      grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+      gap: var(--g92-space-2);
+    }
+
+    .g92-howto__step {
+      gap: var(--g92-space-1);
+      padding: var(--g92-space-3) var(--g92-space-2) var(--g92-space-2);
+    }
+
+    .g92-howto__step::before {
+      top: 6px;
+      left: 6px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .g92-howto__icon {
+      height: 40px;
+    }
+
+    .g92-keys {
+      gap: 4px;
+    }
+
+    .g92-keys li {
+      padding: 4px var(--g92-space-3);
+    }
+
+    .g92-howto__icon .g92-emoji {
+      font-size: 2.25rem;
+    }
+  }
+
   @media (max-height: 640px) {
     .g92-overlay__icon {
       width: 72px;
