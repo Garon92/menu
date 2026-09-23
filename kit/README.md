@@ -290,7 +290,10 @@ Icons into `public/`: `node --experimental-strip-types ~/AI/garon92-pages/menu/k
 <link rel="apple-touch-icon" href="/tanky/apple-touch-icon.png">
 <meta name="theme-color" content="#ef5350">
 ```
-Needs `vite-plugin-pwa` in devDependencies; tsconfig for vite.config must include `src/kit/pwa.ts` + `src/kit/apps.ts` (both DOM-free).
+Needs `vite-plugin-pwa` in devDependencies. `pwa.ts` has no imports (DOM-free, self-contained), so Vite's native
+config loader is happy; to silence the remaining warning import it with the extension —
+`import { g92Pwa } from './src/kit/pwa.ts'` — and set `"allowImportingTsExtensions": true` in the tsconfig that
+covers vite.config.ts (Vite templates already do).
 
 ### Czech helpers
 `greeting('Adámek')` → „Dobré odpoledne, Adámku!“, `vocative(name)`, `plural(n, 'bod', 'body', 'bodů')`,

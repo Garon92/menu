@@ -12,7 +12,7 @@
     "noUncheckedSideEffectImports": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "allowImportingTsExtensions": false,
+    "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "noEmit": true,
     "useDefineForClassFields": true

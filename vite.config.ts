@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import { g92Pwa } from './kit/pwa';
+import { g92Pwa } from './kit/pwa.ts';
 
 export default defineConfig({
   base: '/menu/',
