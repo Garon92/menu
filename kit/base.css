@@ -900,6 +900,11 @@
     overscroll-behavior: contain;
   }
 
+  .g92-dialog:focus,
+  .g92-dialog:focus-visible {
+    outline: none;
+  }
+
   .g92-dialog--wide {
     width: min(100% - 2rem, 44rem);
   }
