@@ -1,21 +1,44 @@
-# Menu (rozcestník)
+# Menu (rozcestník) + g92 kit
 
-Jednoduchý rozcestník pro děti na moje další stránky:
+Rozcestník všech her a procvičování na **https://garon92.github.io/menu/** a zároveň domov
+sdíleného design systému **g92 kit** (`kit/`), který používají všechny ostatní aplikace.
 
-- [Matematika](https://garon92.github.io/matematika/)
-- [Spojovačka](https://garon92.github.io/spojovacka)
-- [Tanky](https://garon92.github.io/tanky/)
-- [Ryby](https://garon92.github.io/ryby/)
-- [Komáři](https://garon92.github.io/komari/)
+## Co umí menu
 
-_Poslední aktualizace: 17. 12. 2025_
+- Pozdrav podle denní doby (a jména, pokud ho zadáš — „Dobré odpoledne, Adámku!“).
+- **Pokračovat** — naposledy otevřené aplikace s rekordem / postupem.
+- Kartičky **Učení** a **Hry** s ikonou, barvou aplikace a živými statistikami
+  (rekord, postup v %, „naposledy před 2 dny“) — aplikace je zapisují přes `kit/activity.ts`.
+- Nastavení platné pro všechny aplikace: zvuk a hlasitost, světlý/tmavý motiv, omezení animací, jméno.
+- Jemné animované pozadí (vypne se při „omezit animace“), instalace jako aplikace (PWA, funguje offline).
+- Průvodce stylem kitu: **/menu/kit.html**.
 
-## Nasazení (GitHub Pages)
+## Vývoj
 
-1. V GitHub repozitáři otevři **Settings → Pages**
-2. Vyber **Deploy from a branch**
-3. Zvol větev `main` a složku `/ (root)`
+```bash
+npm install
+npm run dev        # http://localhost:5170/menu/
+npm run build      # typecheck + build do dist/
+npm run preview    # náhled buildu na :5170
+npm run typecheck
+npm test           # Vitest: store, settings, activity, čeština
+node scripts/shots.mjs ../_night/shots/menu   # screenshoty (běžící preview + Google Chrome)
+```
 
-Potom bude rozcestník dostupný na `https://garon92.github.io/menu/`.
+Stack: Vite + TypeScript (strict), bez frameworku, `vite-plugin-pwa`.
 
+## g92 kit
 
+Kanonický zdroj je `kit/` v tomto repu, dokumentace v [`kit/README.md`](kit/README.md).
+Do ostatních aplikací se kopíruje:
+
+```bash
+bash kit/sync.sh tanky      # nebo více aplikací, nebo --all
+```
+
+Ikony pro PWA aplikace: `node --experimental-strip-types kit/scripts/pwa-icons.mjs <app> <app>/public`.
+
+## Nasazení
+
+GitHub Actions (`.github/workflows/deploy.yml`): push do `main` → typecheck, testy, build → GitHub Pages.
+V nastavení repozitáře musí být **Settings → Pages → Source: GitHub Actions**.

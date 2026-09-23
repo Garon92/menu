@@ -13,6 +13,7 @@
     "icons": "node scripts/pwa-icons.mjs"
   },
   "devDependencies": {
+    "@types/node": "^26.6.2",
     "happy-dom": "^20.14.5",
     "playwright-core": "^1.63.0",
     "typescript": "^7.0.2",

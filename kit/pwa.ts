@@ -27,8 +27,9 @@ export interface G92PwaOverrides {
   globPatterns?: string[];
   /** big assets (MB) allowed in precache (default 6) */
   maxFileSizeMB?: number;
-  /** runtime caching rules passed to workbox */
-  runtimeCaching?: unknown[];
+  /** runtime caching rules passed to workbox (workbox RuntimeCaching[]) */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  runtimeCaching?: any[];
   /** paths that must not fall back to index.html (multi-page apps) */
   navigateFallbackDenylist?: RegExp[];
   /** disable the SPA navigate fallback (multi-page apps) */

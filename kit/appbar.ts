@@ -104,11 +104,11 @@ a, button {
   width: 38px;
   height: 38px;
   border-radius: 12px;
-  color: var(--accent-contrast, #fff);
+  color: #fff;
   background: linear-gradient(145deg, color-mix(in oklab, var(--accent, #6d5dfc) 78%, #fff), var(--accent, #6d5dfc));
   box-shadow: inset 0 -2px 0 rgb(0 0 0 / .14), 0 2px 8px -2px var(--accent-glow, transparent);
 }
-.icon svg { width: 22px; height: 22px; }
+.icon svg { width: 22px; height: 22px; filter: drop-shadow(0 1px 1px rgb(0 0 0 / .18)); }
 .icon:empty { display: none; }
 .name {
   min-width: 0;

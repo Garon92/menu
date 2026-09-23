@@ -1,0 +1,227 @@
+.kg-hero {
+  display: grid;
+  gap: var(--g92-space-3);
+  padding: var(--g92-space-6) 0 var(--g92-space-2);
+}
+
+.kg-hero h1 {
+  font-size: var(--g92-fs-display);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.kg-lead {
+  max-width: 62ch;
+  color: var(--g92-text-muted);
+  font-size: var(--g92-fs-lg);
+  font-weight: var(--g92-fw-medium);
+}
+
+.kg-controls {
+  display: grid;
+  gap: var(--g92-space-4);
+  margin-top: var(--g92-space-3);
+}
+
+.kg-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: 0 0 0 2px var(--g92-surface);
+}
+
+.kg-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--g92-space-2);
+}
+
+.kg-section {
+  padding-top: var(--g92-space-12);
+}
+
+.kg-section__head {
+  display: grid;
+  gap: var(--g92-space-1);
+  margin-bottom: var(--g92-space-5);
+  padding-bottom: var(--g92-space-3);
+  border-bottom: 1px solid var(--g92-border);
+}
+
+.kg-section__head p {
+  color: var(--g92-text-muted);
+  max-width: 70ch;
+}
+
+.kg-sub {
+  margin: var(--g92-space-5) 0 var(--g92-space-3);
+  font-size: var(--g92-fs-sm);
+  font-weight: var(--g92-fw-black);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--g92-text-muted);
+}
+
+.kg-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  gap: var(--g92-space-3);
+}
+
+.kg-swatch {
+  display: grid;
+  gap: 6px;
+}
+
+.kg-swatch__chip {
+  height: 56px;
+  border-radius: var(--g92-radius-md);
+  border: 1px solid var(--g92-border);
+  background-image: none;
+}
+
+.kg-swatch code,
+.kg-type code,
+.kg-app code,
+.kg-icon code {
+  font-size: 0.75rem;
+  color: var(--g92-text-muted);
+}
+
+.kg-apps {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: var(--g92-space-3);
+}
+
+.kg-app {
+  display: flex;
+  align-items: center;
+  gap: var(--g92-space-3);
+  padding: var(--g92-space-3);
+  border-radius: var(--g92-radius-lg);
+  background: var(--g92-surface);
+  border: 1px solid var(--g92-border);
+}
+
+.kg-app > div {
+  display: grid;
+  min-width: 0;
+}
+
+.kg-app .g92-icon-tile {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+}
+
+.kg-type {
+  display: grid;
+  gap: var(--g92-space-3);
+}
+
+.kg-type__row {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  align-items: baseline;
+  gap: var(--g92-space-4);
+  overflow: hidden;
+}
+
+.kg-type__row span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kg-prose {
+  display: grid;
+  gap: var(--g92-space-3);
+  margin-top: var(--g92-space-6);
+}
+
+.kg-space {
+  display: grid;
+  gap: 6px;
+}
+
+.kg-space div {
+  display: flex;
+  align-items: center;
+  gap: var(--g92-space-3);
+}
+
+.kg-space span {
+  display: block;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--accent);
+}
+
+.kg-radii,
+.kg-shadows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: var(--g92-space-4);
+}
+
+.kg-radii div,
+.kg-shadows div {
+  display: grid;
+  place-items: center;
+  height: 88px;
+  background: var(--g92-surface);
+  border: 1px solid var(--g92-border);
+}
+
+.kg-radii div {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+}
+
+.kg-shadows div {
+  border-radius: var(--g92-radius-lg);
+  border-color: transparent;
+}
+
+.kg-demo {
+  margin-top: var(--g92-space-4);
+}
+
+.kg-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  gap: var(--g92-space-2);
+}
+
+.kg-icon {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: var(--g92-space-3) var(--g92-space-2);
+  border-radius: var(--g92-radius-md);
+  background: var(--g92-surface);
+  border: 1px solid var(--g92-border);
+}
+
+.kg-icon svg {
+  width: 28px;
+  height: 28px;
+  color: var(--accent-text);
+}
+
+.kg-foot {
+  margin-top: var(--g92-space-16);
+  padding-top: var(--g92-space-5);
+  border-top: 1px solid var(--g92-border);
+  font-size: var(--g92-fs-sm);
+}
+
+@media (max-width: 520px) {
+  .kg-type__row {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
