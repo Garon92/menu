@@ -52,3 +52,23 @@ export {
 } from './dialog';
 export { toast, type ToastOptions, type ToastVariant } from './toast';
 export { G92Appbar, defineAppbar } from './appbar';
+export { confetti, confettiFrom, clearConfetti, type ConfettiOptions } from './confetti';
+export {
+  showStart,
+  showPause,
+  showResults,
+  countdown,
+  autoPause,
+  type OverlayPromise,
+  type OverlayBaseOptions,
+  type StartOptions,
+  type StartResult,
+  type PauseOptions,
+  type PauseChoice,
+  type ResultsOptions,
+  type ResultsChoice,
+  type CountdownOptions,
+  type Difficulty,
+  type HowToStep,
+  type KeyHint,
+} from './overlay';

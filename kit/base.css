@@ -1254,3 +1254,485 @@
     -webkit-touch-callout: none;
   }
 }
+
+/* ==========================================================================
+   Game overlays (overlay.ts) — v1
+   ========================================================================== */
+@layer components {
+  .g92-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--g92-z-overlay);
+    display: grid;
+    place-items: center;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: max(var(--g92-space-4), env(safe-area-inset-top, 0px)) max(var(--g92-space-4), env(safe-area-inset-right, 0px))
+      max(var(--g92-space-4), env(safe-area-inset-bottom, 0px)) max(var(--g92-space-4), env(safe-area-inset-left, 0px));
+    animation: g92-fade-in var(--g92-dur-3) var(--g92-ease-out);
+  }
+
+  .g92-overlay--contained {
+    position: absolute;
+  }
+
+  .g92-overlay--blur {
+    background: color-mix(in oklab, var(--g92-bg) 45%, transparent);
+    -webkit-backdrop-filter: blur(10px) saturate(1.2);
+    backdrop-filter: blur(10px) saturate(1.2);
+  }
+
+  .g92-overlay--solid {
+    background:
+      radial-gradient(60rem 30rem at 50% -10rem, var(--accent-soft), transparent 70%),
+      radial-gradient(40rem 30rem at 100% 100%, var(--accent-softer), transparent 70%),
+      var(--g92-bg);
+  }
+
+  .g92-overlay--clear {
+    background: transparent;
+  }
+
+  .g92-overlay.is-leaving {
+    animation: g92-fade-out var(--g92-dur-2) var(--g92-ease-in) forwards;
+    pointer-events: none;
+  }
+
+  .g92-overlay__panel {
+    width: min(100%, 32rem);
+    margin: auto;
+    padding: clamp(1.5rem, 1rem + 3vw, 2.5rem);
+    border-radius: var(--g92-radius-2xl);
+    background: var(--g92-surface);
+    border: 1px solid var(--g92-border);
+    box-shadow: var(--g92-shadow-4);
+    text-align: center;
+    animation: g92-dialog-in var(--g92-dur-4) var(--g92-ease-spring);
+  }
+
+  .g92-overlay--start .g92-overlay__panel {
+    background: color-mix(in oklab, var(--g92-surface) 88%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  .g92-overlay__panel,
+  .g92-overlay__view {
+    display: grid;
+    justify-items: center;
+    gap: var(--g92-space-4);
+  }
+
+  .g92-overlay__view[hidden] {
+    display: none;
+  }
+
+  .g92-overlay__icon {
+    display: grid;
+    place-items: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 30px;
+    color: var(--accent-contrast);
+    background: linear-gradient(145deg, color-mix(in oklab, var(--accent) 72%, #fff), var(--accent) 60%, var(--accent-strong));
+    box-shadow: inset 0 -5px 0 rgb(0 0 0 / 0.14), 0 14px 30px -10px var(--accent-glow);
+    animation: g92-bob 3.2s var(--g92-ease-in-out) infinite;
+  }
+
+  .g92-overlay__icon svg {
+    width: 58%;
+    height: 58%;
+  }
+
+  .g92-overlay__icon--sm {
+    width: 72px;
+    height: 72px;
+    border-radius: 24px;
+    animation: none;
+  }
+
+  .g92-emoji {
+    font-size: 2.6em;
+    line-height: 1;
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', var(--g92-font);
+  }
+
+  .g92-overlay__icon .g92-emoji {
+    font-size: 3rem;
+  }
+
+  .g92-overlay__title {
+    font-size: var(--g92-fs-4xl);
+    font-weight: var(--g92-fw-black);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .g92-overlay__title--sm {
+    font-size: var(--g92-fs-3xl);
+  }
+
+  .g92-overlay__subtitle {
+    margin-top: calc(-1 * var(--g92-space-2));
+    color: var(--g92-text-muted);
+    font-size: var(--g92-fs-lg);
+    font-weight: var(--g92-fw-medium);
+  }
+
+  .g92-overlay__best {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.4rem 0.95rem;
+    border-radius: var(--g92-radius-pill);
+    background: color-mix(in oklab, var(--g92-gold) 16%, var(--g92-surface));
+    color: var(--g92-text);
+    font-weight: var(--g92-fw-medium);
+  }
+
+  .g92-overlay__best svg {
+    width: 1.3em;
+    height: 1.3em;
+    color: var(--g92-gold);
+  }
+
+  .g92-overlay__best b {
+    font-weight: var(--g92-fw-black);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .g92-overlay__section {
+    display: grid;
+    gap: var(--g92-space-2);
+    width: 100%;
+    justify-items: center;
+  }
+
+  .g92-overlay__actions {
+    display: grid;
+    gap: var(--g92-space-3);
+    width: 100%;
+    margin-top: var(--g92-space-2);
+  }
+
+  .g92-overlay__row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--g92-space-2);
+  }
+
+  .g92-overlay__row > * {
+    flex: 1 1 8rem;
+  }
+
+  .g92-overlay__stars {
+    padding-top: var(--g92-space-3);
+  }
+
+  .g92-overlay__scorebox {
+    display: grid;
+    justify-items: center;
+    line-height: 1;
+  }
+
+  .g92-overlay__score {
+    font-size: var(--g92-fs-display);
+    font-weight: var(--g92-fw-black);
+    color: var(--accent-text);
+    letter-spacing: -0.03em;
+  }
+
+  .g92-overlay__score-label {
+    margin-top: var(--g92-space-1);
+    color: var(--g92-text-muted);
+    font-weight: var(--g92-fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: var(--g92-fs-xs);
+  }
+
+  .g92-overlay__newbest {
+    font-size: var(--g92-fs-sm);
+    padding: 0.35rem 0.9rem;
+    animation: g92-pop 600ms var(--g92-ease-spring) 300ms both;
+  }
+
+  .g92-overlay__newbest svg {
+    width: 1.2em;
+    height: 1.2em;
+  }
+
+  .g92-overlay__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+    gap: var(--g92-space-2);
+    width: 100%;
+  }
+
+  .g92-overlay__stat {
+    display: grid;
+    gap: 2px;
+    padding: var(--g92-space-3);
+    border-radius: var(--g92-radius-lg);
+    background: var(--g92-surface-2);
+  }
+
+  .g92-overlay__stat dt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35em;
+    color: var(--g92-text-muted);
+    font-size: var(--g92-fs-xs);
+    font-weight: var(--g92-fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .g92-overlay__stat dt svg {
+    width: 1.2em;
+    height: 1.2em;
+  }
+
+  .g92-overlay__stat dd {
+    margin: 0;
+    font-size: var(--g92-fs-xl);
+    font-weight: var(--g92-fw-black);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* difficulty picker */
+  .g92-difficulty {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+    gap: var(--g92-space-2);
+    width: 100%;
+  }
+
+  .g92-difficulty__option {
+    position: relative;
+    display: flex;
+  }
+
+  .g92-difficulty__option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .g92-difficulty__card {
+    flex: 1;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 2px;
+    min-height: 76px;
+    padding: var(--g92-space-3) var(--g92-space-2);
+    border-radius: var(--g92-radius-lg);
+    border: 2px solid var(--g92-border);
+    background: var(--g92-surface);
+    cursor: pointer;
+    transition: border-color var(--g92-dur-2) var(--g92-ease-out), background-color var(--g92-dur-2) var(--g92-ease-out),
+      transform var(--g92-dur-2) var(--g92-ease-spring);
+  }
+
+  .g92-difficulty__option:hover .g92-difficulty__card {
+    border-color: var(--accent-border);
+  }
+
+  .g92-difficulty__option:active .g92-difficulty__card {
+    transform: scale(calc(1 - 0.04 * var(--g92-motion)));
+  }
+
+  .g92-difficulty__option input:checked + .g92-difficulty__card {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .g92-difficulty__option input:focus-visible + .g92-difficulty__card {
+    outline: 3px solid var(--g92-focus);
+    outline-offset: 2px;
+  }
+
+  .g92-difficulty__icon {
+    display: grid;
+    place-items: center;
+    height: 36px;
+    color: var(--accent-text);
+  }
+
+  .g92-difficulty__icon svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .g92-difficulty__icon .g92-emoji {
+    font-size: 1.9rem;
+  }
+
+  .g92-difficulty__label {
+    font-weight: var(--g92-fw-black);
+  }
+
+  .g92-difficulty__hint {
+    color: var(--g92-text-muted);
+    font-size: var(--g92-fs-xs);
+    font-weight: var(--g92-fw-medium);
+  }
+
+  /* how to play — pictograms */
+  .g92-howto {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: var(--g92-space-3);
+    width: 100%;
+    counter-reset: g92-step;
+  }
+
+  .g92-howto__step {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: var(--g92-space-2);
+    padding: var(--g92-space-4) var(--g92-space-3);
+    border-radius: var(--g92-radius-lg);
+    background: var(--g92-surface-2);
+    counter-increment: g92-step;
+    animation: g92-float-in var(--g92-dur-4) var(--g92-ease-out) both;
+    animation-delay: calc(var(--i, 0) * 90ms);
+  }
+
+  .g92-howto__step::before {
+    content: counter(g92-step);
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-contrast);
+    font-size: var(--g92-fs-xs);
+    font-weight: var(--g92-fw-black);
+  }
+
+  .g92-howto__icon {
+    display: grid;
+    place-items: center;
+    height: 60px;
+    color: var(--accent-text);
+  }
+
+  .g92-howto__icon svg {
+    width: 52px;
+    height: 52px;
+  }
+
+  .g92-howto__icon .g92-emoji {
+    font-size: 3rem;
+  }
+
+  .g92-howto__text {
+    font-weight: var(--g92-fw-bold);
+    font-size: var(--g92-fs-sm);
+    line-height: 1.3;
+  }
+
+  .g92-keys {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--g92-space-2);
+    width: 100%;
+  }
+
+  .g92-keys li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--g92-space-3);
+    padding: var(--g92-space-2) var(--g92-space-3);
+    border-radius: var(--g92-radius-md);
+    background: var(--g92-surface-2);
+    font-weight: var(--g92-fw-medium);
+    text-align: left;
+  }
+
+  .g92-keys__keys {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  /* countdown */
+  .g92-countdown {
+    position: fixed;
+    inset: 0;
+    z-index: var(--g92-z-overlay);
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
+  .g92-countdown__num {
+    font-size: clamp(6rem, 4rem + 18vw, 14rem);
+    font-weight: var(--g92-fw-black);
+    line-height: 1;
+    color: var(--accent);
+    -webkit-text-stroke: 4px var(--g92-surface);
+    paint-order: stroke fill;
+    text-shadow: 0 10px 40px var(--accent-glow);
+    animation: g92-count 800ms var(--g92-ease-out) both;
+  }
+
+  .g92-countdown__num.is-go {
+    font-size: clamp(4rem, 2.5rem + 12vw, 9rem);
+    color: var(--g92-success);
+  }
+
+  @keyframes g92-count {
+    0% {
+      opacity: 0;
+      transform: scale(calc(1 + 1.2 * var(--g92-motion)));
+    }
+    25% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(calc(1 - 0.2 * var(--g92-motion)));
+    }
+  }
+
+  @keyframes g92-bob {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(calc(-6px * var(--g92-motion))) rotate(calc(-2deg * var(--g92-motion)));
+    }
+  }
+
+  @media (max-height: 640px) {
+    .g92-overlay__icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
+    }
+    .g92-overlay__panel,
+    .g92-overlay__view {
+      gap: var(--g92-space-3);
+    }
+  }
+}
