@@ -1349,6 +1349,10 @@
     gap: var(--g92-space-4);
   }
 
+  .g92-overlay__view {
+    width: 100%;
+  }
+
   .g92-overlay__view[hidden] {
     display: none;
   }
@@ -1773,6 +1777,5 @@
   }
 }
 
-g92-appbar {
-  view-transition-name: g92-appbar;
-}
+/* NB: no view-transition-name on <g92-appbar> — it would make the bar a backdrop root
+   and kill its frosted-glass backdrop-filter. */

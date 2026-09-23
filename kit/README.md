@@ -292,4 +292,5 @@ Needs `vite-plugin-pwa` in devDependencies; tsconfig for vite.config must includ
 
 ### Page transitions
 `base.css` enables cross-document View Transitions (`@view-transition { navigation: auto }`) — menu ↔ app
-navigation cross-fades in supporting browsers; `<g92-appbar>` has `view-transition-name: g92-appbar`.
+navigation cross-fades in supporting browsers. Don't put `view-transition-name` on elements that use
+`backdrop-filter` (it makes them a backdrop root → no blur).
