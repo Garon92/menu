@@ -75,6 +75,8 @@ export interface StartOptions extends OverlayBaseOptions {
   showHowTo?: boolean;
   /** also register howTo/keys as the appbar "?" help (setHelp) so it is available during the game */
   helpInAppbar?: boolean;
+  /** smaller icon/title/gaps — use when you add `extra` content so "Hrát" stays above the fold */
+  compact?: boolean;
 }
 
 export interface StartResult {
@@ -210,7 +212,7 @@ export function showStart(opts: StartOptions = {}): OverlayPromise<StartResult> 
   if (opts.helpInAppbar && (opts.howTo?.length || opts.keys?.length)) setHelp({ title: 'Jak hrát', howTo: opts.howTo, keys: opts.keys });
 
   return mount<StartResult>(
-    { backdrop: 'solid', ...opts },
+    { backdrop: 'solid', ...opts, className: `${opts.compact ? 'g92-overlay--compact ' : ''}${opts.className ?? ''}`.trim() || undefined },
     'start',
     (close, panel) => {
       const main = h('div', { class: 'g92-overlay__view' });
@@ -227,6 +229,8 @@ export function showStart(opts: StartOptions = {}): OverlayPromise<StartResult> 
       if (opts.difficulties?.length) {
         const name = `g92-diff-${Math.random().toString(36).slice(2, 7)}`;
         const group = h('div', { class: 'g92-difficulty', role: 'radiogroup', 'aria-label': opts.difficultyLabel ?? 'Obtížnost' });
+        // up to 4 options always stay in one row (even on 360px phones)
+        if (opts.difficulties.length <= 4) group.style.gridTemplateColumns = `repeat(${opts.difficulties.length}, minmax(0, 1fr))`;
         for (const d of opts.difficulties) {
           const input = h('input', { type: 'radio', name, value: d.id }) as HTMLInputElement;
           input.checked = d.id === difficulty;

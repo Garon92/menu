@@ -1772,6 +1772,47 @@
     width: 100%;
   }
 
+  /* Compact variant (showStart({ compact: true })) and small phones */
+  .g92-overlay--compact .g92-overlay__panel,
+  .g92-overlay--compact .g92-overlay__view,
+  .g92-overlay--compact .g92-overlay__hero,
+  .g92-overlay--compact .g92-overlay__controls {
+    gap: var(--g92-space-3);
+  }
+
+  .g92-overlay--compact .g92-overlay__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+  }
+
+  .g92-overlay--compact .g92-overlay__title {
+    font-size: var(--g92-fs-3xl);
+  }
+
+  @media (max-width: 420px) {
+    .g92-difficulty {
+      gap: 6px;
+    }
+
+    .g92-difficulty__card {
+      min-height: 68px;
+      padding-inline: 4px;
+    }
+
+    .g92-difficulty__label {
+      font-size: var(--g92-fs-sm);
+    }
+
+    .g92-difficulty__hint {
+      font-size: 0.6875rem;
+    }
+
+    .g92-overlay__panel {
+      padding-inline: var(--g92-space-5);
+    }
+  }
+
   /* Short landscape screens (phones sideways): hero left, controls right, no scrolling */
   @media (max-height: 520px) and (orientation: landscape) {
     .g92-overlay {

@@ -266,6 +266,8 @@ recordActivity('komari', { metric: { label: 'Rekord', value: best } });
 const next = await showResults({ score, best, isNewBest, stars: 2, stats: [{ label: 'Přesnost', value: '92 %' }] });
 // 'again' | 'menu' | custom action value; plays win/lose sound + confetti (new best / top stars)
 ```
+`showStart` extras: `compact: true` (smaller icon/title when you add `extra` content), `helpInAppbar: true`,
+`showHowTo: true` (open the pictograms first, e.g. on the very first visit). Up to 4 difficulties always stay in one row.
 Options shared by all: `container` (mount inside a positioned element), `backdrop: 'blur'|'solid'|'clear'`,
 `coverAppbar`, `extra: Node`. `menuHref: null` makes "Menu" resolve `'menu'` instead of navigating to `/menu/`.
 Each call returns a Promise with `.el` and `.close(value)`.
