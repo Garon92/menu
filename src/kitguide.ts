@@ -251,6 +251,7 @@ ${sec(
     <button class="g92-btn g92-btn--ghost" data-toast="success">Toast úspěch</button>
     <button class="g92-btn g92-btn--ghost" data-toast="danger">Toast chyba</button>
     <button class="g92-btn g92-btn--ghost" data-toast="accent">Toast accent</button>
+    <button class="g92-btn g92-btn--ghost" data-toast="action">Toast s akcí</button>
   </div>`,
 )}
 
@@ -296,6 +297,10 @@ function wire(): void {
   root.querySelectorAll<HTMLButtonElement>('[data-sfx]').forEach((b) => b.addEventListener('click', () => sfx.play(b.dataset.sfx as SfxName)));
   root.querySelectorAll<HTMLButtonElement>('[data-toast]').forEach((b) =>
     b.addEventListener('click', () => {
+      if (b.dataset.toast === 'action') {
+        toast('Je k dispozici nová verze.', { icon: UI_ICONS.sparkle, action: { label: 'Obnovit', onClick: () => toast('Obnovuji…') } });
+        return;
+      }
       const v = b.dataset.toast as 'default' | 'success' | 'danger' | 'accent';
       const msg = { default: 'Uloženo.', success: 'Správně! Skvělá práce.', danger: 'Ups, to nevyšlo.', accent: 'Nový rekord!' }[v];
       toast(msg, { variant: v, icon: v === 'success' ? UI_ICONS.check : v === 'danger' ? UI_ICONS.cross : v === 'accent' ? UI_ICONS.trophy : undefined });

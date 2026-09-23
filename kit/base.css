@@ -1010,6 +1010,27 @@
     animation: g92-toast-in var(--g92-dur-3) var(--g92-ease-spring);
   }
 
+  .g92-toast__msg {
+    flex: 1;
+  }
+
+  .g92-toast__action {
+    flex: none;
+    min-height: 36px;
+    margin: -4px -6px -4px 4px;
+    padding: 0 0.9rem;
+    border: 0;
+    border-radius: var(--g92-radius-sm);
+    background: color-mix(in oklab, currentColor 16%, transparent);
+    color: inherit;
+    font-weight: var(--g92-fw-black);
+    cursor: pointer;
+  }
+
+  .g92-toast__action:hover {
+    background: color-mix(in oklab, currentColor 26%, transparent);
+  }
+
   .g92-toast.is-leaving {
     animation: g92-fade-out var(--g92-dur-2) var(--g92-ease-in) forwards;
   }
