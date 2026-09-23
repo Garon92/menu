@@ -327,3 +327,12 @@ const s = useSettings();                              // re-renders on any setti
 const [best, setBest] = useStoreValue(store, 'best'); // setBest(v) or setBest(prev => …)
 useAppbarEvent('g92-help', () => setHelpOpen(true));
 ```
+
+### Help ("?" in the appbar) — v0.5
+```ts
+import { setHelp, showHelp } from './kit';
+setHelp({ title: 'Jak hrát', intro?: '…', howTo: [{ icon: '👆', text: 'Klepni na komára' }], keys: [{ keys: ['P'], text: 'pauza' }], extra?: '<p>…</p>' });
+// every <g92-appbar> gets the "?" button; clicking it opens the pictogram dialog (event g92-help is cancelable —
+// call e.preventDefault() in your listener to show your own UI instead). showHelp() opens it programmatically.
+showStart({ …, howTo, keys, helpInAppbar: true });   // reuse the start-screen pictograms as appbar help
+```

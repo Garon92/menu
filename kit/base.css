@@ -1636,6 +1636,7 @@
     border-radius: var(--g92-radius-lg);
     background: var(--g92-surface-2);
     counter-increment: g92-step;
+    text-align: center;
     animation: g92-float-in var(--g92-dur-4) var(--g92-ease-out) both;
     animation-delay: calc(var(--i, 0) * 90ms);
   }

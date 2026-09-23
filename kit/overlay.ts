@@ -23,6 +23,7 @@ import { UI_ICONS, h, starsHTML } from './dom';
 import { prefersReducedMotion } from './settings';
 import { sfx } from './sfx';
 import { formatMetric } from './activity';
+import { setHelp } from './help';
 
 export type OverlayPromise<T> = Promise<T> & { el: HTMLElement; close: (value: T) => void };
 
@@ -72,6 +73,8 @@ export interface StartOptions extends OverlayBaseOptions {
   keys?: KeyHint[];
   /** open the how-to view immediately (e.g. first visit) */
   showHowTo?: boolean;
+  /** also register howTo/keys as the appbar "?" help (setHelp) so it is available during the game */
+  helpInAppbar?: boolean;
 }
 
 export interface StartResult {
@@ -191,6 +194,7 @@ function isTyping(e: KeyboardEvent): boolean {
 export function showStart(opts: StartOptions = {}): OverlayPromise<StartResult> {
   const app = getApp(opts.appId ?? document.querySelector('g92-appbar')?.getAttribute('app'));
   let difficulty = opts.difficulty ?? opts.difficulties?.[0]?.id;
+  if (opts.helpInAppbar && (opts.howTo?.length || opts.keys?.length)) setHelp({ title: 'Jak hrát', howTo: opts.howTo, keys: opts.keys });
 
   return mount<StartResult>(
     { backdrop: 'solid', ...opts },

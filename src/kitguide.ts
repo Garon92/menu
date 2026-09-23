@@ -14,6 +14,7 @@ import {
   getSettings,
   openDialog,
   openSettingsDialog,
+  setHelp,
   setSettings,
   sfx,
   showPause,
@@ -389,15 +390,17 @@ async function demo(kind: string): Promise<void> {
   }
 }
 
-document.querySelector('g92-appbar')?.addEventListener('g92-help', () =>
-  openDialog({
-    title: 'O téhle stránce',
-    icon: UI_ICONS.help,
-    content: `<p>Průvodce stylem pro všechny aplikace garon92. Přepni motiv nebo accent a podívej se, jak se komponenty chovají.</p>
-      <p class="g92-muted">Pro vývojáře: <code>menu/kit/README.md</code>, synchronizace do aplikací přes <code>bash menu/kit/sync.sh &lt;app&gt;</code>.</p>`,
-    actions: [{ label: 'Rozumím', autofocus: true }],
-  }),
-);
+// appbar "?" → setHelp() content (the kit's default help dialog)
+setHelp({
+  title: 'O téhle stránce',
+  intro: 'Průvodce stylem pro všechny aplikace garon92. Přepni motiv nebo barvu aplikace a podívej se, jak se komponenty chovají.',
+  howTo: [
+    { icon: '🎨', text: 'Přepni motiv a barvu nahoře' },
+    { icon: '👆', text: 'Vyzkoušej tlačítka a dialogy' },
+    { icon: '🎮', text: 'Spusť ukázky herních obrazovek' },
+  ],
+  extra: '<p class="g92-hint">Pro vývojáře: <code>menu/kit/README.md</code>, synchronizace do aplikací: <code>bash menu/kit/sync.sh &lt;app&gt;</code>.</p>',
+});
 
 subscribeSettings((n, prev) => {
   if (n.theme !== prev.theme) {
