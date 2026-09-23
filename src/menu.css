@@ -216,8 +216,35 @@
 .app-grid {
   display: grid;
   gap: clamp(0.75rem, 0.5rem + 1vw, 1.25rem);
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  grid-template-columns: 1fr;
 }
+
+@media (min-width: 560px) {
+  .app-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* odd one out fills the last row */
+  .app-grid > .app-card:last-child:nth-child(odd) {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 740px) {
+  .app-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .app-grid > .app-card:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+  /* 3n+2 items: last card spans the two free columns */
+  .app-grid > .app-card:last-child:nth-child(3n + 2) {
+    grid-column: span 2;
+  }
+  .app-grid > .app-card:last-child:nth-child(3n + 1) {
+    grid-column: span 3;
+  }
+}
+
 
 .app-card {
   --art-h: 136px;
@@ -459,6 +486,58 @@
   }
 }
 
+/* Wide card (fills the last row): art on the left */
+@media (min-width: 560px) {
+  .app-card.is-wide {
+    flex-direction: row;
+  }
+
+  .app-card.is-wide .app-card__art {
+    width: 42%;
+    height: auto;
+    min-height: 200px;
+    flex: none;
+  }
+
+  .app-card.is-wide .app-card__icon {
+    width: 96px;
+    height: 96px;
+    border-radius: 30px;
+  }
+
+  .app-card.is-wide .app-card__icon svg {
+    width: 54px;
+    height: 54px;
+  }
+
+  .app-card.is-wide .app-card__body {
+    align-content: center;
+    padding: var(--g92-space-6) 72px var(--g92-space-6) var(--g92-space-6);
+  }
+
+  .app-card.is-wide .app-card__title {
+    font-size: var(--g92-fs-2xl);
+  }
+
+  .app-card.is-wide .app-card__desc {
+    display: block;
+  }
+
+  .app-card.is-wide .app-card__go {
+    top: 50%;
+    margin-top: -22px;
+    right: var(--g92-space-5);
+  }
+}
+
+.app-card__desc {
+  display: none;
+  margin-top: var(--g92-space-2);
+  max-width: 44ch;
+  color: var(--g92-text-muted);
+  font-size: var(--g92-fs-sm);
+}
+
 /* Phones: horizontal cards */
 @media (max-width: 559px) {
   .app-grid {
@@ -520,7 +599,7 @@
 .continue__list {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(17rem, 1fr);
+  grid-auto-columns: min(19rem, 84%);
   gap: var(--g92-space-3);
   margin: -6px calc(-1 * var(--g92-gutter)) 0;
   padding: 6px var(--g92-gutter) 10px;
@@ -606,8 +685,24 @@
   white-space: nowrap;
 }
 
+.resume-card__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--g92-space-2);
+  min-width: 0;
+}
+
+.resume-card__foot .g92-progress {
+  flex: 1;
+  max-width: 9rem;
+  margin: 0;
+}
+
 .resume-card__when {
-  color: var(--g92-text-muted);
+  flex: none;
+  color: var(--g92-text-subtle);
+  font-size: var(--g92-fs-xs);
+  font-weight: var(--g92-fw-bold);
 }
 
 .resume-card__detail {
@@ -625,10 +720,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.resume-card .g92-progress {
-  margin-top: 4px;
-  max-width: 12rem;
-}
+
 
 .resume-card__play {
   display: grid;
@@ -816,4 +908,40 @@
 .is-settled .app-card,
 .is-settled .resume-card {
   animation: none;
+}
+
+/* hero chips: combined daily practice from learning apps */
+.hero__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--g92-space-2);
+  margin-top: var(--g92-space-4);
+}
+
+.hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0.3rem 0.85rem 0.3rem 0.6rem;
+  border-radius: var(--g92-radius-pill);
+  background: var(--g92-surface);
+  border: 1px solid var(--g92-border);
+  box-shadow: var(--g92-shadow-1);
+  font-size: var(--g92-fs-sm);
+  font-weight: var(--g92-fw-medium);
+}
+
+.hero-chip svg {
+  width: 20px;
+  height: 20px;
+  color: var(--g92-success);
+}
+
+.hero-chip--flame svg {
+  color: #f97316;
+}
+
+.hero-chip b {
+  font-weight: var(--g92-fw-black);
 }

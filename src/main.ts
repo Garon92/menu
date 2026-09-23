@@ -21,6 +21,7 @@ import {
   type G92App,
 } from '../kit';
 import { buildBackground } from './background';
+import { dailySummary } from './daily';
 import { escapeHTML, pickDaily } from './util';
 import { installPrompt } from './install';
 import { settingsExtra } from './settings-extra';
@@ -90,6 +91,7 @@ function cardHTML(app: G92App, e: ActivityEntry | undefined, i: number): string 
   <span class="app-card__body">
     <span class="app-card__title"><span>${escapeHTML(app.name)}</span>${tags}</span>
     <span class="app-card__tagline">${escapeHTML(app.tagline)}</span>
+    <span class="app-card__desc">${escapeHTML(app.description)}</span>
     <span class="app-card__meta">${metaHTML(app, e)}</span>
   </span>
   <span class="app-card__go" aria-hidden="true">${UI_ICONS.arrowRight}</span>
@@ -109,8 +111,8 @@ function resumeHTML(app: G92App, e: ActivityEntry, i: number): string {
   <span class="resume-card__icon" aria-hidden="true">${app.icon}</span>
   <span class="resume-card__text">
     <span class="resume-card__name">${escapeHTML(app.name)}</span>
-    <span class="resume-card__detail">${detail} <span class="resume-card__when" data-ts-short="${e.lastOpened}">· ${timeAgoShort(e.lastOpened)}</span></span>
-    ${e.progress !== undefined ? `<span class="g92-progress g92-progress--sm" style="--value:${e.progress}"></span>` : ''}
+    <span class="resume-card__detail">${detail}</span>
+    <span class="resume-card__foot">${e.progress !== undefined ? `<span class="g92-progress g92-progress--sm" style="--value:${e.progress}"></span>` : ''}<span class="resume-card__when" data-ts-short="${e.lastOpened}">${timeAgoShort(e.lastOpened)}</span></span>
   </span>
   <span class="resume-card__play" aria-hidden="true">${UI_ICONS.play}</span>
 </a>`;
@@ -120,10 +122,15 @@ function heroHTML(): string {
   const s = getSettings();
   const g = greeting(s.playerName);
   const sub = pickDaily(SUBLINES);
+  const d = dailySummary();
+  const chips: string[] = [];
+  if (d.streak > 1) chips.push(`<span class="hero-chip hero-chip--flame">${UI_ICONS.flame}<span>Série <b>${d.streak}</b> ${d.streak < 5 ? 'dny' : 'dní'}</span></span>`);
+  if (d.today > 0) chips.push(`<span class="hero-chip">${UI_ICONS.check}<span>Dnes procvičeno <b>${d.today}</b></span></span>`);
   return `<header class="hero">
   <p class="hero__date">${escapeHTML(dateFmt.format(new Date()))}</p>
   <h1 class="hero__title">${escapeHTML(g)} <span class="hero__wave" aria-hidden="true">👋</span></h1>
   <p class="hero__sub">${escapeHTML(sub)}</p>
+  ${chips.length ? `<div class="hero__chips">${chips.join('')}</div>` : ''}
 </header>`;
 }
 
@@ -157,7 +164,7 @@ let rendered = false;
 let lastSignature = '';
 
 function signature(): string {
-  return JSON.stringify([getActivity(), getSettings().playerName]);
+  return JSON.stringify([getActivity(), getSettings().playerName, dailySummary()]);
 }
 
 /** Re-render only when the data behind the page changed (keeps focus/scroll, no replayed animations). */
@@ -206,8 +213,26 @@ function render(): void {
 </footer>`);
 
   main.innerHTML = sections.join('\n');
+  markWide();
   wire();
 }
+
+/** Cards that fill a whole last row get the horizontal "wide" layout (CSS decides the span). */
+function markWide(): void {
+  for (const card of main.querySelectorAll<HTMLElement>('.app-card')) {
+    const grid = card.parentElement as HTMLElement;
+    const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    const cs = getComputedStyle(card);
+    const span = `${cs.gridColumnStart} ${cs.gridColumnEnd}`;
+    card.classList.toggle('is-wide', cols > 1 && /span\s*[23]/.test(span));
+  }
+}
+
+let resizeRaf = 0;
+window.addEventListener('resize', () => {
+  cancelAnimationFrame(resizeRaf);
+  resizeRaf = requestAnimationFrame(markWide);
+});
 
 function refreshTimes(): void {
   for (const el of main.querySelectorAll<HTMLElement>('[data-ts]')) {
@@ -215,7 +240,7 @@ function refreshTimes(): void {
     const target = el.querySelector('span') ?? el;
     target.textContent = timeAgo(ts);
   }
-  for (const el of main.querySelectorAll<HTMLElement>('[data-ts-short]')) el.textContent = `· ${timeAgoShort(Number(el.dataset.tsShort))}`;
+  for (const el of main.querySelectorAll<HTMLElement>('[data-ts-short]')) el.textContent = timeAgoShort(Number(el.dataset.tsShort));
   const hero = main.querySelector('.hero__title');
   // greeting depends on the time of day
   if (hero && !hero.textContent?.startsWith(greeting(getSettings().playerName))) replaceHero();
