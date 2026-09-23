@@ -1,4 +1,4 @@
-import { UI_ICONS, clearActivity, confirmDialog, getActivity, h, sfx, toast } from '../kit';
+import { UI_ICONS, clearActivity, confirmDialog, countLabel, getActivity, h, sfx, toast } from '../kit';
 
 /** Menu-specific section of the settings dialog. */
 export function settingsExtra(onChange: () => void): HTMLElement {
@@ -8,7 +8,7 @@ export function settingsExtra(onChange: () => void): HTMLElement {
   btn.addEventListener('click', async () => {
     const ok = await confirmDialog({
       title: 'Vymazat historii?',
-      message: 'Zmizí seznam „Pokračovat" a statistiky na kartičkách. Rekordy a postup v jednotlivých hrách zůstanou.',
+      message: 'Zmizí seznam „Pokračovat“ a statistiky na kartičkách. Rekordy a postup v jednotlivých hrách zůstanou.',
       confirmLabel: 'Vymazat',
       danger: true,
     });
@@ -23,6 +23,6 @@ export function settingsExtra(onChange: () => void): HTMLElement {
     'div',
     { class: 'g92-field' },
     h('span', { class: 'g92-label' }, 'Historie v menu'),
-    h('div', { class: 'g92-row', style: 'justify-content: space-between; flex-wrap: wrap' }, h('span', { class: 'g92-hint' }, count ? `Záznamy z ${count} aplikací` : 'Zatím prázdná'), btn),
+    h('div', { class: 'g92-row', style: 'justify-content: space-between; flex-wrap: wrap' }, h('span', { class: 'g92-hint' }, count ? `Záznamy: ${countLabel(count, 'aplikace', 'aplikace', 'aplikací')}` : 'Zatím prázdná'), btn),
   );
 }

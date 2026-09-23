@@ -90,8 +90,11 @@ async function ctx(opts = {}) {
   });
   await p.goto(base, { waitUntil: 'networkidle' });
   await p.waitForTimeout(100);
-  const chips = await p.textContent('.hero__chips');
-  check(/Série\s*3\s*dny/.test(chips ?? '') && /Dnes procvičeno\s*12/.test(chips ?? ''), `daily chips: "${chips?.replace(/\s+/g, ' ').trim()}"`);
+  const chips = (await p.textContent('.hero__chips'))?.replace(/\s+/g, ' ').trim();
+  check(chips === 'Dnes: 1 aplikace', `hero chip counts apps, never sums units: "${chips}"`);
+  const mat = (await p.textContent('.app-card[data-app="matematika"] .app-card__meta'))?.replace(/\s+/g, ' ');
+  const ces = (await p.textContent('.app-card[data-app="cestina"] .app-card__meta'))?.replace(/\s+/g, ' ');
+  check(/Dnes 7 z 10/.test(mat ?? '') && /3 dny v řadě/.test(mat ?? '') && /Dnešní cíl splněn/.test(ces ?? ''), `per-app daily status on cards: "${mat?.trim()}" | "${ces?.trim()}"`);
   const opacity = await p.$eval('.app-card[data-app="dots"]', (e) => getComputedStyle(e).opacity);
   check(opacity === '1', 'reduced motion: cards visible immediately');
   await p.screenshot({ path: path.join(out, 'flow-tablet-reduced-motion.png'), fullPage: true });

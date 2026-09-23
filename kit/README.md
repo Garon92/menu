@@ -43,6 +43,10 @@ Copies into `<app>/src/kit/` (with `--delete`), writes `src/kit/VENDORED.md`. Re
 | `streak.ts` | `createDaily(appId, { goal })` — daily goal + streak + last-7-days for learning apps (v0.4) |
 | `react/dialog.tsx` | `openReactDialog(opts, (close) => node)`, `openReactSettingsDialog(node)` (React apps only, v0.6) |
 | `react/hooks.ts` | `useSettings`, `useStoreValue`, `useActivity`, `useAppbarEvent` (React apps only, v0.4) |
+| `labels.ts` | family vocabulary: `LABELS`, `LABEL_ICONS`, `DIFFICULTIES_3`, `HELP_TITLE_*`, `SETTINGS_LABELS`, `GLOBAL_KEYS` (v0.7) |
+| `nav.ts` | leaving the app: `guardLeave`, `setLeaveGuard`, `confirmLeave`, `goToMenu` (v0.7) |
+| `reset.ts` | `resetApp(appId)` — wipe an app's `g92:<app>:*` + its menu activity (v0.7) |
+| `speech.ts` | `speak(text, { auto })` — automatic speech follows the `voice` setting (v0.7) |
 | `scripts/pwa-icons.mjs` | generates favicon.svg + PWA PNGs from the registry (not vendored) |
 
 ## Vanilla TS (games, menu)
@@ -123,6 +127,90 @@ Settings in React:
 import { useSyncExternalStore } from 'react';
 import { settings } from './kit';
 export const useSettings = () => useSyncExternalStore(settings.subscribe, settings.snapshot); // stable frozen snapshot
+```
+
+
+## Pravidla rodiny aplikací (v0.7 — the cross-app contract)
+
+Kids learn ONE pattern. Every app follows these rules; the kit makes them the default.
+
+### Slova a ikony (`LABELS` / `LABEL_ICONS` from `labels.ts`)
+
+| action | label | icon | notes |
+|---|---|---|---|
+| start a game / session | **Hrát** | ▶ `play` | flavour ("Rybařit!") goes into the subtitle, never on the button |
+| continue after pause | **Pokračovat** | ▶ `play` | |
+| replay | **Hrát znovu** | ↻ `restart` | same word on pause AND results |
+| next level | **Další úroveň** | → `arrowRight` | `showResults({ againLabel: LABELS.next, againIcon: LABEL_ICONS.next })` |
+| in-app home | **Domů** | 🏠 `home` | in-app "up" buttons use the house, never a chevron |
+| leave the app | **Menu** | ⊞ `grid` | only the appbar / pause / results; goes to `/menu/` |
+| end the running game | **Ukončit hru** | ✕ | `showPause({ quit: true })` → `'quit'` → your in-app home |
+| dismiss a first-run intro | **Jdeme na to!** | → | `LABELS.intro` |
+| close how-to / help | **Rozumím** | ✓ | `LABELS.gotIt` |
+| leave-guard dialog | **Zůstat** (default) / **Odejít** | | `confirmLeave()` |
+| appbar "?" | **Nápověda** | ? | titles: **Jak hrát** (games) / **Jak na to** (learning) — `HELP_TITLE_GAME` / `HELP_TITLE_LEARN`, `helpTitle(appId)` |
+| appbar ⚙ | **Nastavení** | | always the kit dialog + the app's section; long pages behind one row **Další nastavení…** |
+
+Difficulty: `DIFFICULTIES_3` = **Lehká 🐢 / Normální 🐇 / Těžká 🔥** — app flavour goes into `hint`
+(`{ ...DIFFICULTIES_3[0], hint: 'Mrňous – vlasec nepraskne' }`).
+
+Settings words (`SETTINGS_LABELS`): Zvuky · Hlasitost · Předčítání · Vzhled · Animace · Jméno hráče ·
+Jméno v této aplikaci · Další nastavení…
+
+### Chování
+
+1. **Leaving (`g92-back`)** — the appbar "Menu" dispatches a cancelable `g92-back`, asks the leave guard, then
+   navigates. During a running game / lesson / exam register a guard:
+   ```ts
+   import { guardLeave } from './kit';
+   const off = guardLeave({ isActive: () => game.running, onPause: () => game.pause(), onStay: () => showPause() });
+   // → "Odejít do menu? Rozehraná hra se neuloží." — focus on "Zůstat"; also a browser prompt on reload/close
+   ```
+   Custom text: `guardLeave({ …, message: 'Rozdělaný test se neuloží.' })`. Low level: `setLeaveGuard(() => boolean | Promise<boolean>)`.
+   Your own "Menu" buttons call `goToMenu()` (pause/results overlays already do). If the user came from the menu, the
+   kit goes **back** in history (no Back-button loop). Installed apps (standalone PWA, opened directly) hide "Menu".
+2. **Pause button lives in the appbar**: `const b = appbarPauseButton(() => pause()); b.hidden = !running;`
+   Other slotted buttons: `appbarAction({ icon: UI_ICONS.…, label, onClick })` (kit look & size).
+3. **Dialogs pause the game**: every kit dialog (help, settings, confirm) fires `g92-dialog-open` / `g92-dialog-close`
+   on `document`. `autoPause()` and `createLoop()` handle it; apps with their own timers must listen:
+   `document.addEventListener('g92-dialog-open', pause)` or `onDialogChange((open) => …)`.
+4. **Confirmations are safe by default**: `confirmDialog` focuses the cancel button; with `danger: true` the red button
+   is never the default. (`defaultConfirm: true` for harmless questions.)
+5. **Toasts** appear at the top below the appbar, never catch taps (only their action button). Extra offset:
+   `:root { --g92-toast-offset: 56px }`. Achievements belong into `showResults({ stats })`, not toasts.
+6. **The primary button is always visible**: overlay panels scroll inside and keep `.g92-overlay__actions` pinned at the
+   bottom (fade edge); landscape phones get hero | controls columns; dialogs compact on landscape.
+7. **Names**: the menu asks once and sets the family default `playerName`. Apps read `getPlayerName(appId)`.
+   An app used by someone else (e.g. the teen in angličtina) stores its own name with `setAppPlayerName(appId, name)`
+   (never prefill it with the family name). Settings then show "Jméno v této aplikaci". Apps with profiles:
+   `setSettingsSection({ nameMode: 'hidden' })`.
+8. **Sound vs speech**: `sound` = effects + music (appbar 🔊). `voice` = automatic read-aloud ("Předčítání").
+   `speak(text, { auto: true })` respects it; a 🔊 button the user taps → `speak(text)` always speaks.
+9. **Reset**: every "Smazat postup / všechna data" button calls `resetApp(appId)` (removes `g92:<app>:*`, daily and the
+   menu's activity entry), then reloads.
+10. **Metrics for the menu** use one grammatical form: `recordActivity(id, { metric: { value: 58, unit: ['hvězda','hvězdy','hvězd'] } })`
+    → "58 hvězd"; `{ value: 12, of: 59, unit: ['ryba','ryby','ryb'] }` → "12 z 59 ryb"; label-only → "Rekord: 12 840".
+    Put WHERE to continue into `note` ("Násobilka 7") and optionally a deep link `href` ("/matematika/#/uroven/7").
+    Daily goals: `createDaily(id, { goal, unit: ['příklad','příklady','příkladů'] })` — the menu shows it per app.
+11. **Global keys** (`<g92-appbar keys>`): **M** zvuk, **F** celá obrazovka, **?** nápověda; **P/Esc** pauza stays with the
+    app. Apps keep other letters for their own actions (remove your own M handler when you add `keys`).
+12. **Titles**: `<title>` = `appTitle(id)` → "Komáři – Plácni je všechny!" (en dash); the manifest uses the same.
+    Czech quotes are „…“ (never `"` as the closing mark).
+13. **Games**: `<html class="g92-game">` stops pinch-zoom on overlays/dialogs.
+14. **404**: add `g92NotFoundPage('<app>')` to vite plugins (`{ spa: true }` for path-routed apps) → Czech 404 page.
+15. **Offline**: the appbar records `g92:<app>:offline` once the app's service worker is active; the menu dims apps
+    that were never opened when the device is offline.
+
+### Settings section per app
+```ts
+import { setSettingsSection } from './kit';
+setSettingsSection({
+  extra: () => mySettingsNode(),                 // app rows (use SETTINGS_LABELS words)
+  more: { href: './#/nastaveni' },              // "Další nastavení…" row for long settings pages
+  nameMode: 'hidden',                            // 'auto' | 'family' | 'app' | 'hidden'
+  showVoice: true,                               // "Předčítání" (default: learning apps + menu)
+});
+// ⚙ in the appbar now always opens openSettingsDialog({ appId }) with this section.
 ```
 
 ## Tokens (CSS)
@@ -213,7 +301,9 @@ const d = openDialog({ title, content: '<p>…</p>' | Node, icon?: UI_ICONS.help
 await d.closed;  // action value or undefined
 await confirmDialog({ title: 'Začít znovu?', message: '…', confirmLabel: 'Ano', danger: true }) // boolean
 await alertDialog({ title: 'Hotovo' });
-toast('Uloženo', { variant: 'success' | 'danger' | 'accent', icon, duration });
+toast('Uloženo', { variant: 'success' | 'danger' | 'accent', icon, duration, action?: { label, onClick } });  // top, tap-through
+await confirmDialog({ …, danger: true })   // focus stays on "Zrušit"
+openSettingsDialog({ appId, extra, nameMode, showVoice, more })
 ```
 
 ### appbar
@@ -223,8 +313,9 @@ toast('Uloženo', { variant: 'success' | 'danger' | 'accent', icon, duration });
 </g92-appbar>
 ```
 Attributes: `app` (required), `heading`, `back` (`none` hides), `back-label`, `fullscreen[=selector]`, `help`,
-`no-sound`, `no-settings`, `no-accent`, `no-activity`, `no-theme-color`, `transparent`.
-Slots: `actions`, `title`, `start`. Events: `g92-help`, `g92-settings` (cancelable), `g92-fullscreen`.
+`no-sound`, `no-settings`, `no-accent`, `no-activity`, `no-theme-color`, `transparent`, `keys` (v0.7).
+Slots: `actions`, `title`, `start`. Events: `g92-back`, `g92-help`, `g92-settings` (all cancelable), `g92-fullscreen`.
+The back link is "⊞ Menu" (grid icon, label kept whenever it fits; icon-only on very narrow bars).
 Height: `var(--g92-appbar-h)` = 60 px (+ safe-area).
 
 ### registry

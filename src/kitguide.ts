@@ -20,6 +20,14 @@ import {
   showPause,
   showResults,
   showStart,
+  LABELS,
+  LABEL_ICONS,
+  DIFFICULTIES_3,
+  HELP_TITLE_GAME,
+  HELP_TITLE_LEARN,
+  guardLeave,
+  showHelp,
+  appbarPauseButton,
   starsHTML,
   subscribeSettings,
   toast,
@@ -79,6 +87,7 @@ function render(): void {
       ['stav', 'Postup a hvězdy'],
       ['ikony', 'Ikony'],
       ['dialogy', 'Dialogy'],
+      ['pravidla', 'Pravidla rodiny'],
       ['hry', 'Herní obrazovky'],
       ['zvuky', 'Zvuky'],
     ]
@@ -197,7 +206,7 @@ ${sec(
       <label class="g92-switch-row"><span class="g92-label">Přepínač</span><input type="checkbox" class="g92-toggle" role="switch" checked></label>
       <label class="g92-switch-row"><span class="g92-label">Vypnutý</span><input type="checkbox" class="g92-toggle" role="switch"></label>
     </div>
-    <div class="g92-field"><span class="g92-label">Segmenty</span><div class="g92-segmented" role="radiogroup" aria-label="Obtížnost"><label><input type="radio" name="kg-seg" checked><span>Lehká</span></label><label><input type="radio" name="kg-seg"><span>Střední</span></label><label><input type="radio" name="kg-seg"><span>Těžká</span></label></div></div>
+    <div class="g92-field"><span class="g92-label">Segmenty</span><div class="g92-segmented" role="radiogroup" aria-label="Obtížnost"><label><input type="radio" name="kg-seg" checked><span>Lehká</span></label><label><input type="radio" name="kg-seg"><span>Normální</span></label><label><input type="radio" name="kg-seg"><span>Těžká</span></label></div></div>
     <div class="g92-field"><label class="g92-label" for="kg-range">Posuvník</label><input id="kg-range" type="range" class="g92-range" min="0" max="100" value="60"></div>
   </div>`,
 )}
@@ -272,6 +281,24 @@ ${sec(
 )}
 
 ${sec(
+  'pravidla',
+  'Pravidla rodiny aplikací',
+  'Stejné slovo a stejná ikona pro stejnou akci ve všech aplikacích (<code>LABELS</code>, <code>LABEL_ICONS</code>). Příběhové texty patří do podnadpisu, ne na tlačítko.',
+  `<div class="kg-words">${(['play', 'resume', 'again', 'next', 'home', 'menu', 'quit', 'intro', 'gotIt'] as const)
+    .map((k) => `<div class="kg-word"><span class="g92-btn g92-btn--${k === 'play' || k === 'resume' || k === 'next' ? 'sm' : 'secondary g92-btn--sm'}" aria-hidden="true">${(LABEL_ICONS as Record<string, string>)[k] ?? ''}${LABELS[k]}</span><code>LABELS.${k}</code></div>`)
+    .join('')}</div>
+  <h3 class="kg-sub">Obtížnost (DIFFICULTIES_3)</h3>
+  <div class="kg-demo g92-cluster">${DIFFICULTIES_3.map((d) => `<span class="g92-chip">${d.icon} ${d.label}</span>`).join('')}</div>
+  <h3 class="kg-sub">Nápověda</h3>
+  <p class="g92-muted">Tlačítko v liště: „${LABELS.help}“. Titulek: „${HELP_TITLE_GAME}“ ve hrách, „${HELP_TITLE_LEARN}“ v učení.</p>
+  <div class="kg-demo g92-cluster">
+    <button class="g92-btn g92-btn--secondary" data-demo="help-text">${UI_ICONS.help}Nápověda – text</button>
+    <button class="g92-btn g92-btn--secondary" data-demo="guard">${UI_ICONS.grid}Rozehraná hra → Menu</button>
+    <button class="g92-btn g92-btn--secondary" data-demo="pausebtn">${UI_ICONS.pause}Pauza v liště</button>
+  </div>`,
+)}
+
+${sec(
   'zvuky',
   'Zvuky',
   '<code>sfx.ts</code> — syntetizované přes WebAudio, bez souborů. Řídí se nastavením zvuku a hlasitosti.',
@@ -335,11 +362,7 @@ async function demo(kind: string): Promise<void> {
     case 'start': {
       const r = await showStart({
         appId: 'komari',
-        difficulties: [
-          { id: 'easy', label: 'Lehká', icon: '🐢' },
-          { id: 'normal', label: 'Střední', icon: '🐇' },
-          { id: 'hard', label: 'Těžká', icon: '🔥' },
-        ],
+        difficulties: [...DIFFICULTIES_3],
         difficulty: 'normal',
         best: { label: 'Rekord', value: 1240 },
         howTo: [
@@ -384,6 +407,31 @@ async function demo(kind: string): Promise<void> {
       await countdown();
       toast('Start!');
       break;
+    case 'help-text':
+      showHelp({
+        title: HELP_TITLE_LEARN,
+        intro: 'Textová nápověda pro aplikace s delším vysvětlením (setHelp({ sections })).',
+        sections: [
+          { icon: '📚', title: 'Slovíčka', text: 'Každý den krátká dávka nových slovíček.', items: ['Klepni na kartu', 'Řekni si význam', 'Ohodnoť, jak to šlo'] },
+          { icon: '✍️', title: 'Gramatika', text: 'Vysvětlení s příklady a cvičení na závěr.' },
+        ],
+      });
+      break;
+    case 'guard': {
+      let active = true;
+      const off = guardLeave({ isActive: () => active, onStay: () => toast('Hra pokračuje') });
+      toast('Hra „běží“ — klepni na Menu v liště (10 s).', { duration: 4000 });
+      setTimeout(() => {
+        active = false;
+        off();
+      }, 10000);
+      break;
+    }
+    case 'pausebtn': {
+      const b = appbarPauseButton(() => toast('Pauza!'));
+      setTimeout(() => b.remove(), 8000);
+      break;
+    }
     case 'confetti':
       if (!confetti({ cannons: true })) toast('Konfety jsou vypnuté (omezené animace).');
       break;

@@ -128,7 +128,8 @@
 
 .hero__title {
   margin-top: var(--g92-space-1);
-  font-size: var(--g92-fs-4xl);
+  /* scale with the smaller of width and height, so a landscape phone doesn't get a giant title */
+  font-size: clamp(1.75rem, min(1.6rem + 2.6vw, 1rem + 5vh), 3.25rem);
   font-weight: var(--g92-fw-black);
   letter-spacing: -0.03em;
   line-height: 1.05;
@@ -613,13 +614,33 @@
   display: none;
 }
 
-@media (min-width: 900px) {
+/* phones: horizontal scroller with room to scroll the last card fully into view */
+.continue__list::after {
+  content: '';
+  width: 1px;
+}
+
+@media (min-width: 700px) {
   .continue__list {
     grid-auto-flow: row;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     overflow: visible;
     margin-inline: 0;
     padding-inline: 0;
+  }
+
+  .continue__list::after {
+    display: none;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 899px) {
+  .resume-card {
+    flex-wrap: wrap;
+  }
+
+  .resume-card__play {
+    display: none;
   }
 }
 
@@ -944,4 +965,174 @@
 
 .hero-chip b {
   font-weight: var(--g92-fw-black);
+}
+
+/* ---- Landscape phones: apps visible on the first screen ----------------- */
+@media (max-height: 560px) and (orientation: landscape) {
+  .hero {
+    padding-block: var(--g92-space-2) 0;
+  }
+
+  .hero__date,
+  .hero__sub {
+    display: none;
+  }
+
+  .hero__title {
+    font-size: clamp(1.5rem, 1rem + 4vh, 2rem);
+  }
+
+  .hero__chips {
+    margin-top: var(--g92-space-2);
+  }
+
+  .section-head {
+    margin: var(--g92-space-5) 0 var(--g92-space-3);
+  }
+
+  .section-title {
+    font-size: var(--g92-fs-xl);
+  }
+
+  .welcome {
+    margin-top: var(--g92-space-3);
+    padding: var(--g92-space-4);
+  }
+
+  .welcome__art {
+    display: none;
+  }
+
+  .welcome {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- Offline ------------------------------------------------------------- */
+.offline-note {
+  display: flex;
+  align-items: center;
+  gap: var(--g92-space-2);
+  margin-top: var(--g92-space-4);
+  padding: var(--g92-space-3) var(--g92-space-4);
+  border-radius: var(--g92-radius-lg);
+  background: var(--g92-warning-soft);
+  color: var(--g92-text);
+  font-weight: var(--g92-fw-medium);
+}
+
+.offline-note svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  color: var(--g92-warning);
+}
+
+.app-card.is-offline,
+.resume-card.is-offline {
+  filter: grayscale(0.85);
+  opacity: 0.72;
+}
+
+.stat--offline {
+  color: var(--g92-warning);
+  font-weight: var(--g92-fw-bold);
+}
+
+.stat--offline svg {
+  color: var(--g92-warning);
+}
+
+.stat--daily.is-done,
+.stat--daily.is-done svg {
+  color: var(--g92-success);
+  font-weight: var(--g92-fw-bold);
+}
+
+.stat--streak svg {
+  color: #f97316;
+}
+
+/* ---- Welcome form hint / skip -------------------------------------------- */
+.welcome__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--g92-space-2);
+}
+
+.welcome__foot .g92-hint.is-error {
+  color: var(--g92-danger);
+  font-weight: var(--g92-fw-bold);
+}
+
+.welcome__foot .g92-btn {
+  margin-right: calc(-1 * var(--g92-space-2));
+}
+
+/* ---- Compact welcome: phones + landscape, so the first app cards are on the first screen ---- */
+@media (max-width: 559px), (max-height: 560px) and (orientation: landscape) {
+  .welcome {
+    grid-template-columns: 1fr;
+    gap: var(--g92-space-2);
+    margin-top: var(--g92-space-4);
+    padding: var(--g92-space-4) var(--g92-space-5);
+    border-radius: var(--g92-radius-xl);
+  }
+
+  .welcome__art,
+  .welcome__text > p {
+    display: none;
+  }
+
+  .welcome__text h2 {
+    font-size: var(--g92-fs-xl);
+  }
+
+  .welcome__form {
+    margin-top: var(--g92-space-2);
+  }
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  .welcome__text {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--g92-space-6);
+  }
+
+  .welcome {
+    padding-block: var(--g92-space-3);
+  }
+
+  .welcome__form {
+    display: flex;
+    align-items: center;
+    gap: var(--g92-space-2);
+    margin-top: 0;
+    max-width: none;
+  }
+
+  .welcome__form > .g92-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .welcome__row {
+    flex: 1;
+  }
+
+  .welcome__foot .g92-hint:not(.is-error) {
+    display: none;
+  }
+
+  .welcome__foot {
+    flex: none;
+  }
 }

@@ -1,21 +1,34 @@
-import { APPS, createDaily } from '../kit';
+import { APPS, createDaily, getActivity, safeStorage } from '../kit';
 
-/** Combined daily stats of the learning apps that use kit/streak.ts (read-only; same origin → shared storage). */
-export function dailySummary(now = new Date()): { today: number; streak: number } {
-  let today = 0;
-  let streak = 0;
+export interface AppDaily {
+  today: number;
+  goal: number;
+  done: boolean;
+  streak: number;
+  unit?: [string, string, string];
+}
+
+/**
+ * Per-app daily status of the learning apps that use kit/streak.ts. Never summed across apps:
+ * different apps count different things (examples, tasks, words) and may belong to different people.
+ */
+export function dailyByApp(now = new Date()): Record<string, AppDaily> {
+  const out: Record<string, AppDaily> = {};
   for (const app of APPS) {
     if (app.category !== 'learn') continue;
-    let has = false;
-    try {
-      has = localStorage.getItem(`g92:${app.id}:daily`) !== null;
-    } catch {
-      has = false;
-    }
-    if (!has) continue;
+    if (safeStorage.getItem(`g92:${app.id}:daily`) === null) continue;
     const d = createDaily(app.id);
-    today += d.today(now);
-    streak = Math.max(streak, d.streak(now));
+    const today = d.today(now);
+    const streak = d.streak(now);
+    if (!today && !streak) continue;
+    const unit = d.unit();
+    out[app.id] = { today, goal: d.goal(), done: today >= d.goal(), streak, ...(unit ? { unit } : {}) };
   }
-  return { today, streak };
+  return out;
+}
+
+/** How many apps (excluding the menu) were opened today. */
+export function appsUsedToday(now = new Date()): number {
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  return Object.entries(getActivity()).filter(([id, e]) => id !== 'menu' && APPS.some((a) => a.id === id) && e.lastOpened >= start).length;
 }

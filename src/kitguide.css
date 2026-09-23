@@ -225,3 +225,20 @@
     gap: 2px;
   }
 }
+
+.kg-words {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: var(--g92-space-3);
+}
+
+.kg-word {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+}
+
+.kg-word code {
+  font-size: 0.75rem;
+  color: var(--g92-text-muted);
+}

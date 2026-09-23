@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import { g92Pwa } from './kit/pwa.ts';
+import { g92NotFoundPage, g92Pwa } from './kit/pwa.ts';
 
 export default defineConfig({
   base: '/menu/',
@@ -16,5 +16,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [VitePWA(g92Pwa('menu', { navigateFallbackDenylist: [/kit\.html$/] }))],
+  plugins: [VitePWA(g92Pwa('menu', { navigateFallbackDenylist: [/kit\.html$/] })), g92NotFoundPage('menu')],
 });
