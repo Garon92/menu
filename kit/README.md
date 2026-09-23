@@ -41,6 +41,7 @@ Copies into `<app>/src/kit/` (with `--delete`), writes `src/kit/VENDORED.md`. Re
 | `loop.ts` | `createLoop({ update(dt), render(), fixedStep? })` — rAF loop, dt clamp, stops while hidden (v0.4) |
 | `canvas.ts` | `fitCanvas(canvas, { maxDpr, onResize })` — DPR-crisp auto-resizing 2D canvas (v0.4) |
 | `streak.ts` | `createDaily(appId, { goal })` — daily goal + streak + last-7-days for learning apps (v0.4) |
+| `react/dialog.tsx` | `openReactDialog(opts, (close) => node)`, `openReactSettingsDialog(node)` (React apps only, v0.6) |
 | `react/hooks.ts` | `useSettings`, `useStoreValue`, `useActivity`, `useAppbarEvent` (React apps only, v0.4) |
 | `scripts/pwa-icons.mjs` | generates favicon.svg + PWA PNGs from the registry (not vendored) |
 
@@ -341,3 +342,18 @@ setHelp({ title: 'Jak hrát', intro?: '…', howTo: [{ icon: '👆', text: 'Klep
 // call e.preventDefault() in your listener to show your own UI instead). showHelp() opens it programmatically.
 showStart({ …, howTo, keys, helpInAppbar: true });   // reuse the start-screen pictograms as appbar help
 ```
+
+### React dialogs — v0.6 (`src/kit/react/dialog.tsx`, React apps only)
+```tsx
+import { openReactDialog, openReactSettingsDialog } from './kit/react/dialog';
+openReactDialog({ title: 'Jak na to', actions: [{ label: 'Rozumím' }] }, (close) => <Help onDone={() => close('ok')} />);
+openReactSettingsDialog(<MathSettings />, { hideName: false });   // kit settings + your React section
+// document.addEventListener('g92-settings', (e) => { e.preventDefault(); openReactSettingsDialog(<MathSettings />); });
+```
+The React root is unmounted after the dialog closes. (`openSettingsWithExtra` = alias.)
+
+### Appbar on narrow phones — v0.6
+Below 480 px the bar tightens (actions 44 px, no gaps). If the title still wouldn't fit next to all actions,
+only the icon tile is shown (name kept for screen readers, host gets `[data-title-collapsed]`). The fullscreen
+button only appears where the Fullscreen API exists (not on iPhone Safari). Dialogs opened from a `keydown`
+handler (e.g. Esc → „Opravdu odejít?“) are shown after the event, so the same Esc no longer closes them.
