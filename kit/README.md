@@ -38,6 +38,10 @@ Copies into `<app>/src/kit/` (with `--delete`), writes `src/kit/VENDORED.md`. Re
 | `confetti.ts` | `confetti()`, `confettiFrom(el)` — canvas, reduced-motion aware (v0.2) |
 | `pwa.ts` | `g92Pwa(appId)` → options for `VitePWA()`; DOM-free, import it in vite.config (v0.2) |
 | `cz.ts` | `vocative('Adámek')` → „Adámku“, `greeting(name)`, `plural`, `countLabel` (v0.3) |
+| `loop.ts` | `createLoop({ update(dt), render(), fixedStep? })` — rAF loop, dt clamp, stops while hidden (v0.4) |
+| `canvas.ts` | `fitCanvas(canvas, { maxDpr, onResize })` — DPR-crisp auto-resizing 2D canvas (v0.4) |
+| `streak.ts` | `createDaily(appId, { goal })` — daily goal + streak + last-7-days for learning apps (v0.4) |
+| `react/hooks.ts` | `useSettings`, `useStoreValue`, `useActivity`, `useAppbarEvent` (React apps only, v0.4) |
 | `scripts/pwa-icons.mjs` | generates favicon.svg + PWA PNGs from the registry (not vendored) |
 
 ## Vanilla TS (games, menu)
@@ -294,3 +298,32 @@ Needs `vite-plugin-pwa` in devDependencies; tsconfig for vite.config must includ
 `base.css` enables cross-document View Transitions (`@view-transition { navigation: auto }`) — menu ↔ app
 navigation cross-fades in supporting browsers. Don't put `view-transition-name` on elements that use
 `backdrop-filter` (it makes them a backdrop root → no blur).
+
+### Games: loop + canvas — v0.4
+```ts
+import { createLoop, fitCanvas, autoPause, haptic } from './kit';
+const view = fitCanvas(document.querySelector('canvas')!, { maxDpr: 2, onResize: (v) => layout(v.width, v.height) });
+const loop = createLoop({ update: (dt) => world.step(dt), render: () => draw(view.ctx, view.width, view.height) });
+loop.start();                 // loop.stop() on pause/results; it also idles while the tab is hidden
+haptic('success');            // short vibration (Android), follows the sound setting
+```
+Canvas CSS: give it a size (`width:100%; height: calc(100dvh - var(--g92-appbar-total))`) and class
+`g92-no-touch-scroll` to stop page scroll / pinch on the play area.
+
+### Learning apps: daily goal + streak — v0.4
+```ts
+import { createDaily, toast, sfx, UI_ICONS } from './kit';
+const daily = createDaily('matematika', { goal: 20 });
+const r = daily.record();                    // after each solved task
+if (r.reachedNow) { sfx.levelUp(); toast(`Denní cíl splněn! Série ${r.streak} dní`, { variant: 'success', icon: UI_ICONS.flame }); }
+daily.todayProgress();  daily.streak();  daily.bestStreak();  daily.week();   // [{ date, count, done, isToday }] ×7
+```
+Stored as `g92:<app>:daily` (separate from `createStore` keys).
+
+### React hooks — v0.4 (`src/kit/react/hooks.ts`, React apps only)
+```tsx
+import { useSettings, useStoreValue, useActivity, useAppbarEvent } from './kit/react/hooks';
+const s = useSettings();                              // re-renders on any settings change (also other tabs)
+const [best, setBest] = useStoreValue(store, 'best'); // setBest(v) or setBest(prev => …)
+useAppbarEvent('g92-help', () => setHelpOpen(true));
+```
