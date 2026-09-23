@@ -34,6 +34,11 @@ Copies into `<app>/src/kit/` (with `--delete`), writes `src/kit/VENDORED.md`. Re
 | `dialog.ts` | modal dialogs, confirm/alert, settings dialog |
 | `toast.ts` | toasts |
 | `dom.ts` | `h()` hyperscript, `starsHTML()`, `plural()`, `flash()`, `UI_ICONS` |
+| `overlay.ts` | game screens: `showStart`, `showPause`, `showResults`, `countdown`, `autoPause` (v0.2) |
+| `confetti.ts` | `confetti()`, `confettiFrom(el)` — canvas, reduced-motion aware (v0.2) |
+| `pwa.ts` | `g92Pwa(appId)` → options for `VitePWA()`; DOM-free, import it in vite.config (v0.2) |
+| `cz.ts` | `vocative('Adámek')` → „Adámku“, `greeting(name)`, `plural`, `countLabel` (v0.3) |
+| `scripts/pwa-icons.mjs` | generates favicon.svg + PWA PNGs from the registry (not vendored) |
 
 ## Vanilla TS (games, menu)
 
@@ -226,3 +231,65 @@ getApp('tanky')  // { id, name, tagline, description, category, accent, icon, pa
 ### dom helpers
 `h('button', { class: 'g92-btn', onclick }, 'Hrát')`, `starsHTML(n, max)`, `plural(n, 'bod', 'body', 'bodů')`,
 `flash(el, 'g92-anim-shake')`, `bindRange(input)`, `UI_ICONS.{back,home,soundOn,soundOff,fullscreen,settings,help,close,play,pause,restart,check,cross,trophy,sparkle,sun,moon,user,flame,clock,star,…}`.
+
+### overlays (games) — v0.2
+```ts
+import { showStart, showPause, showResults, countdown, autoPause } from './kit';
+
+const { difficulty } = await showStart({
+  appId: 'komari',                                   // title/tagline/icon from the registry
+  difficulties: [{ id: 'easy', label: 'Lehká', icon: '🐢' }, { id: 'normal', label: 'Střední', icon: '🐇' }, { id: 'hard', label: 'Těžká', icon: '🔥' }],
+  difficulty: store.get('difficulty'),
+  best: { label: 'Rekord', value: store.get('best') }, // hidden when 0
+  howTo: [{ icon: '👆', text: 'Klepni na komára' }, { icon: '⏱️', text: 'Stihni to včas' }],   // pictograms, kids don't read
+  keys: [{ keys: ['Mezerník'], text: 'pauza' }],
+});
+await countdown();                                   // 3-2-1-Start! with beeps
+
+let pauseOverlay: ReturnType<typeof showPause> | null = null;
+async function pause() {
+  if (pauseOverlay) return;
+  stopLoop();
+  pauseOverlay = showPause();                        // Esc / P resume; "Znovu"; "Menu" → /menu/
+  const choice = await pauseOverlay;                 // 'resume' | 'restart' | 'menu'
+  pauseOverlay = null;
+  if (choice === 'resume') startLoop(); else if (choice === 'restart') restart();
+}
+autoPause(pause);                                    // tab hidden / window blur
+
+const { best, isNewBest } = store.submitBest('best', score);
+recordActivity('komari', { metric: { label: 'Rekord', value: best } });
+const next = await showResults({ score, best, isNewBest, stars: 2, stats: [{ label: 'Přesnost', value: '92 %' }] });
+// 'again' | 'menu' | custom action value; plays win/lose sound + confetti (new best / top stars)
+```
+Options shared by all: `container` (mount inside a positioned element), `backdrop: 'blur'|'solid'|'clear'`,
+`coverAppbar`, `extra: Node`. `menuHref: null` makes "Menu" resolve `'menu'` instead of navigating to `/menu/`.
+Each call returns a Promise with `.el` and `.close(value)`.
+
+### confetti
+`confetti({ particleCount, origin: {x, y}, spread, cannons })`, `confettiFrom(el)`, `clearConfetti()` — returns false (no-op) with reduced motion.
+
+### PWA
+```ts
+// vite.config.ts
+import { VitePWA } from 'vite-plugin-pwa';
+import { g92Pwa } from './src/kit/pwa';
+export default defineConfig({ base: '/tanky/', plugins: [VitePWA(g92Pwa('tanky'))] });
+// multi-page app: g92Pwa('cestina', { noNavigateFallback: true }); big assets: { maxFileSizeMB: 10, globPatterns: [...] }
+```
+Icons into `public/`: `node --experimental-strip-types ~/AI/garon92-pages/menu/kit/scripts/pwa-icons.mjs tanky public`
+(favicon.svg, pwa-192.png, pwa-512.png, pwa-maskable-512.png, apple-touch-icon.png). In `index.html`:
+```html
+<link rel="icon" href="/tanky/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/tanky/apple-touch-icon.png">
+<meta name="theme-color" content="#ef5350">
+```
+Needs `vite-plugin-pwa` in devDependencies; tsconfig for vite.config must include `src/kit/pwa.ts` + `src/kit/apps.ts` (both DOM-free).
+
+### Czech helpers
+`greeting('Adámek')` → „Dobré odpoledne, Adámku!“, `vocative(name)`, `plural(n, 'bod', 'body', 'bodů')`,
+`countLabel(1200, 'bod', 'body', 'bodů')` → „1 200 bodů“, `timeAgo(ts)` / `timeAgoShort(ts)`.
+
+### Page transitions
+`base.css` enables cross-document View Transitions (`@view-transition { navigation: auto }`) — menu ↔ app
+navigation cross-fades in supporting browsers; `<g92-appbar>` has `view-transition-name: g92-appbar`.
