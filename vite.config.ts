@@ -16,5 +16,10 @@ export default defineConfig({
       },
     },
   },
-  plugins: [VitePWA(g92Pwa('menu', { navigateFallbackDenylist: [/kit\.html$/] })), g92NotFoundPage('menu')],
+  plugins: [VitePWA(g92Pwa('menu', {
+    name: 'Moje projekty – Garon92',
+    shortName: 'Moje projekty',
+    description: 'Rozcestník her, učení, tvoření, webů a souborů ke stažení.',
+    navigateFallbackDenylist: [/kit\.html$/],
+  })), g92NotFoundPage('menu')],
 });
