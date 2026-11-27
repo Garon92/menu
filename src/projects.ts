@@ -28,6 +28,7 @@ const svg = (body: string): string =>
 const duo = 'fill="currentColor" fill-opacity=".2"';
 
 const icons = {
+  musiclab: svg(`<path d="M9 17V6l11-3v11M9 9l11-3"/><ellipse cx="6" cy="17.5" rx="3" ry="2.5" ${duo}/><ellipse cx="17" cy="14.5" rx="3" ry="2.5" ${duo}/>`),
   biolab: svg('<path d="M7 3c0 7 10 11 10 18M17 3c0 7-10 11-10 18M7.4 5h9.2M9.5 9h5M9.5 15h5M7.4 19h9.2"/>'),
   naramky: svg(`<circle cx="12" cy="4" r="2.3" ${duo}/><circle cx="19" cy="8" r="2.3"/><circle cx="19" cy="16" r="2.3" ${duo}/><circle cx="12" cy="20" r="2.3"/><circle cx="5" cy="16" r="2.3" ${duo}/><circle cx="5" cy="8" r="2.3"/>`),
   karty: svg(`<rect x="6.5" y="3.5" width="13" height="17" rx="2.5" ${duo}/><path d="M6.5 6.5H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h10M10 8h6M10 12h4M10 16h3"/>`),
@@ -84,6 +85,18 @@ export const PROJECTS: readonly Project[] = [
     accent: '#c2418c',
     action: 'Otevřít',
     keywords: 'korálky šperky návrhář plánovač',
+  },
+  {
+    id: 'musiclab',
+    name: 'MusicLab',
+    description: 'Skládej rytmy a melodie, míchej stopy a ulož skladbu jako WAV.',
+    href: 'https://garon92.github.io/MusicLab/',
+    label: 'Hudební studio',
+    category: 'learn',
+    icon: icons.musiclab,
+    accent: '#26865c',
+    action: 'Otevřít',
+    keywords: 'hudba hudební studio music lab sekvencer syntezátor bicí mixér sampler MIDI Pocket Band',
   },
   familyApp('tanky', 'Tahová tanková bitva s mířením, větrem a zničitelným terénem.', 'souboj střelba rodina'),
   familyApp('ryby', 'Rybaření s českými rybami, sbírkou úlovků a misemi.', 'rybaření rybolov album'),

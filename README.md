@@ -1,8 +1,8 @@
 # Menu — moje projekty
 
-Rozcestník na **https://garon92.github.io/menu/**. Obsahuje 17 projektů:
+Rozcestník na **https://garon92.github.io/menu/**. Obsahuje 18 projektů:
 
-- **Učení a tvoření:** Matematika, Čeština, Angličtina, BioLab, Náramky.
+- **Učení a tvoření:** Matematika, Čeština, Angličtina, BioLab, Náramky, MusicLab.
 - **Hry a simulace:** Tanky, Ryby, Komáři, Spojovačka, Dots, Karty pro nás.
 - **Weby:** Domškoláci, Kostičková Parta, Mravenci, Trilobiti, PureMU.
 - **Ke stažení:** Letadlo pro Android, se stabilním odkazem na nejnovější APK a informace o verzi.
